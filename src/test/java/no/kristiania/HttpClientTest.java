@@ -24,6 +24,12 @@ public class HttpClientTest {
     void shouldReadResponseHeader() throws  IOException {
         HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?body=Kristiania");
         assertEquals("10", client.getResponseHeader("Content-Length"));
-
     }
+
+    @Test
+    void shouldReadResponseBody() throws  IOException {
+        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?body=Kristiania");
+        assertEquals("Kristiania", client.getResponseBody());
+    }
+
 }
