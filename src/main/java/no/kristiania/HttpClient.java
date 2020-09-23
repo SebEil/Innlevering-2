@@ -13,12 +13,16 @@ public class HttpClient {
         String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
                 "Host: " + hostName + "\r\n\r\n";
         socket.getOutputStream().write(request.getBytes());
-
+        StringBuilder line  = new StringBuilder();
         int c;
         while((c = socket.getInputStream().read()) != -1) {
-            if (c != '\n') break;
-            System.out.print((char)c);
+            if (c == '\n') break;  //changing operator != to ==
+            line.append((char)c);
+
         }
+        System.out.println(line);
+        String[] parts = line.toString().split(" ");
+        statusCode = Integer.parseInt(parts[1]);
     }
 
     public static void main(String[] args) throws IOException {
@@ -29,5 +33,9 @@ public class HttpClient {
 
     public int getStatusCode() {
         return statusCode;
+    }
+
+    public String getResponseHeader(String headerName) {
+        return null;
     }
 }
