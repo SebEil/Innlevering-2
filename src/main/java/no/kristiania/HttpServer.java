@@ -1,10 +1,14 @@
 package no.kristiania;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HttpServer {
+
+    private static File documentRoot;
 
     public HttpServer(int port) throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
@@ -32,6 +36,22 @@ public class HttpServer {
             QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
             statusCode = queryString.getParameter("status");
             body = queryString.getParameter("body");
+        } else if (!requestTarget.equals("/echo")){
+            File targetFile = new File(documentRoot, requestTarget);
+
+            if (!targetFile.exists()) {
+                writeResponse(clientSocket, "404", requestTarget + " not found");
+                return;
+            }
+
+            String responseHeaders = "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length:" + targetFile.length() + "\r\n" +
+                    "Content-Type: text/html\r\n" +
+                    "\r\n";
+            clientSocket.getOutputStream().write(responseHeaders.getBytes());
+            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
+                inputStream.transferTo(clientSocket.getOutputStream());
+            }
         }
 
         if (statusCode == null) statusCode = "200";
@@ -51,7 +71,12 @@ public class HttpServer {
     }
 
     public static void main(String[] args) throws IOException {
-        new HttpServer(8080);
+        HttpServer server = new HttpServer(8080);
+        server.setDocumentRoot(new File("src/main/resources"));
     }
 
+    public void setDocumentRoot(File documentRoot) {
+        this.documentRoot = documentRoot;
+    }
 }
+
