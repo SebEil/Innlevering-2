@@ -13,14 +13,14 @@ public class HttpServer {
     public HttpServer(int port) throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
 
-        new Thread(() -> {
-            try {
-                Socket socket = serverSocket.accept();
-                handleRequest(socket);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+            new Thread(() -> {
+                try {
+                    Socket socket = serverSocket.accept();
+                    handleRequest(socket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
     }
 
     private static void handleRequest(Socket clientSocket) throws IOException {
