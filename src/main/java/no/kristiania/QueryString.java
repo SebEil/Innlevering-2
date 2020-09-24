@@ -11,14 +11,14 @@ public class QueryString {
             if (queryString.isEmpty()) return;
             for (String parameter : queryString.split("&")) {
                 int equalPos = parameter.indexOf("=");
+                String key = parameter.substring(0, equalPos);
                 String value = parameter.substring(equalPos+1);
-                String parameterName = parameter.substring(0, equalPos);
-                parameters.put(parameterName, value);
+                this.parameters.put(key, value);
             }
         }
 
-        public String getParameter(String name) {
-            return parameters.get(name);
+        public String getParameter(String key) {
+            return parameters.get(key);
         }
 
         public String getQueryString() {
