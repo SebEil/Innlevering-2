@@ -5,20 +5,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HttpServer {
 
     private static File documentRoot;
+    private List<String> workerNames = new ArrayList<>();
 
     public HttpServer(int port) throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
 
             new Thread(() -> {
-                try {
-                    Socket socket = serverSocket.accept();
-                    handleRequest(socket);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                while (true) {
+                    try {
+                        Socket socket = serverSocket.accept();
+                        handleRequest(socket);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }).start();
     }
@@ -79,6 +84,10 @@ public class HttpServer {
 
     public void setDocumentRoot(File documentRoot) {
         this.documentRoot = documentRoot;
+    }
+
+    public List<String> getWorkerNames() {
+        return workerNames;
     }
 }
 

@@ -27,16 +27,28 @@ public class HttpClient {
         responseBody = body.toString();
     }
 
+    public HttpClient(String hostName, int port, String requestTarget, String method, QueryString form) throws IOException {
+        Socket socket = new Socket(hostName, port);
+
+        String requestBody = form.getQueryString();
+
+        HttpMessage requestMessage = new HttpMessage(method + " " + requestTarget + " HTTP/1.1");
+        requestMessage.setHeader("Host", hostName);
+        requestMessage.setHeader("Content-Length", String.valueOf(requestBody.length()));
+        requestMessage.write(socket);
+        socket.getOutputStream().write(requestBody.getBytes());
+
+        responseMessage = HttpMessage.read(socket);
+    }
+
     public static void main(String[] args) throws IOException {
         HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=200&body=Hello%20world!");
         System.out.println(client.getResponseBody());
-
     }
 
     public int getStatusCode() {
         String[] responseLineParts = responseMessage.getStartLine().split(" ");
-        int statusCode = Integer.parseInt(responseLineParts[1]);
-        return statusCode;
+        return Integer.parseInt(responseLineParts[1]);
     }
 
     public String getResponseHeader(String headerName) {

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -67,6 +68,15 @@ public class HttpServerTest {
         assertEquals("text/html", client.getResponseHeader("Content-Type"));
     }
 
+    @Test
+    void shouldPostWorker() throws IOException {
+        HttpServer server = new HttpServer(10008);
+        QueryString worker = new QueryString("");
+        worker.addParameter("full_name", "workers");
+        worker.addParameter("email_address", "email");
+        new HttpClient("localhost", 10008, "/members", "POST", worker);
+        assertEquals(List.of("workers"), server.getWorkerNames());
+    }
 
 
 }
