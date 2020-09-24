@@ -7,6 +7,7 @@ import java.util.Map;
 public class QueryString {
         private Map<String, String> parameters = new LinkedHashMap<>();
 
+        //!!
         public QueryString(String queryString){
             if (queryString.isEmpty()) return;
             for (String parameter : queryString.split("&")) {
