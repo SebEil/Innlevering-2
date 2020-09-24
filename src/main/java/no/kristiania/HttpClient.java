@@ -10,6 +10,7 @@ public class HttpClient {
     private int statusCode;
     private Map<String, String> responseHeaders = new HashMap<>();
     private String responseBody;
+    private HttpMessage responseMessage;
 
     public HttpClient(String hostName, int port, String requestTarget) throws IOException {
         Socket socket = new Socket(hostName, port);
@@ -18,15 +19,20 @@ public class HttpClient {
         requestMessage.setHeader("Host", hostName);
         requestMessage.write(socket);
 
-        String[] responseLineParts = HttpMessage.readLine(socket).split(" ");
+        String responseLine = HttpMessage.readLine(socket);
+        String[] responseLineParts = responseLine.split(" ");
+        responseMessage = new HttpMessage(responseLine);
 
         statusCode = Integer.parseInt(responseLineParts[1]);
 
         String headerLine;
         while (!(headerLine = HttpMessage.readLine(socket)).isEmpty()) {
             int colonPos = headerLine.indexOf(':');
+
             String headerName = headerLine.substring(0, colonPos);
             String headerValue = headerLine.substring(colonPos+1).trim();
+
+            responseMessage.setHeader(headerName, headerValue);
             responseHeaders.put(headerName, headerValue);
         }
 
@@ -36,7 +42,7 @@ public class HttpClient {
         for (int i = 0 ; i < contentLength; i++) {
             body.append((char)socket.getInputStream().read());
         }
-        this.responseBody = body.toString();
+        responseBody = body.toString();
     }
 
     public static void main(String[] args) throws IOException {
@@ -46,6 +52,8 @@ public class HttpClient {
     }
 
     public int getStatusCode() {
+        String[] responseLineParts = responseMessage.getStartLine().split(" ");
+        int statusCode = Integer.parseInt(responseLineParts[1]);
         return statusCode;
     }
 

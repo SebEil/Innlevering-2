@@ -42,4 +42,7 @@ public class HttpMessage {
         socket.getOutputStream().write((startLine + "\r\n").getBytes());
     }
 
+    public String getStartLine() {
+        return startLine;
+    }
 }
