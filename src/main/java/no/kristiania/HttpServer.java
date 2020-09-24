@@ -45,7 +45,7 @@ public class HttpServer {
             }
 
             String contentType = "text/html";
-            if (targetFile.getName().endsWith(".txt")) {
+            if (targetFile.getName().endsWith(".css")) {
                 contentType = "text/plain";
             }
 
