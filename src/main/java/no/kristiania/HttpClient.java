@@ -8,27 +8,26 @@ import java.util.Map;
 public class HttpClient {
 
     private int statusCode;
-    private Map<String, String> headers = new HashMap<>();
+    private Map<String, String> responseHeaders = new HashMap<>();
     private String responseBody;
 
     public HttpClient(String hostName, int port, String requestTarget) throws IOException {
         Socket socket = new Socket(hostName, port);
 
-        String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
-                "Host: " + hostName + "\r\n\r\n";
-        socket.getOutputStream().write(request.getBytes());
+        HttpMessage requestMessage = new HttpMessage("GET " + requestTarget + " HTTP/1.1");
+        requestMessage.setHeader("Host", hostName);
+        requestMessage.write(socket);
 
-        String line = readLine(socket);
-        System.out.println(line);
-        String[] parts = line.split(" ");
-        statusCode = Integer.parseInt(parts[1]);
+        String[] responseLineParts = readLine(socket).split(" ");
+
+        statusCode = Integer.parseInt(responseLineParts[1]);
 
         String headerLine;
         while (!(headerLine = readLine(socket)).isEmpty()) {
             int colonPos = headerLine.indexOf(':');
             String headerName = headerLine.substring(0, colonPos);
             String headerValue = headerLine.substring(colonPos+1).trim();
-            headers.put(headerName, headerValue);
+            responseHeaders.put(headerName, headerValue);
         }
 
 
@@ -38,7 +37,6 @@ public class HttpClient {
             body.append((char)socket.getInputStream().read());
         }
         this.responseBody = body.toString();
-
     }
 
     public static String readLine(Socket socket) throws IOException {
@@ -64,7 +62,7 @@ public class HttpClient {
     }
 
     public String getResponseHeader(String headerName) {
-        return headers.get(headerName);
+        return responseHeaders.get(headerName);
     }
 
     public String getResponseBody() {
