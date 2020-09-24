@@ -26,6 +26,12 @@ public class HttpMessage {
         return line.toString();
     }
 
+    public static HttpMessage read(Socket socket) throws IOException {
+        HttpMessage message = new HttpMessage(readLine(socket));
+        message.readHeaders(socket);
+        return message;
+    }
+
     public void setHeader(String name, String value) {
         headers.put(name, value);
     }

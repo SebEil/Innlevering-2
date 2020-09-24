@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class HttpClient {
 
-
     private String responseBody;
     private HttpMessage responseMessage;
 
@@ -18,12 +17,7 @@ public class HttpClient {
         requestMessage.setHeader("Host", hostName);
         requestMessage.write(socket);
 
-        String responseLine = HttpMessage.readLine(socket);
-        responseMessage = new HttpMessage(responseLine);
-
-        responseMessage.readHeaders(socket);
-
-
+        responseMessage = HttpMessage.read(socket);
 
         int contentLength = Integer.parseInt(getResponseHeader("Content-Length"));
         StringBuilder body = new StringBuilder();
