@@ -18,12 +18,12 @@ public class HttpClient {
         requestMessage.setHeader("Host", hostName);
         requestMessage.write(socket);
 
-        String[] responseLineParts = readLine(socket).split(" ");
+        String[] responseLineParts = HttpMessage.readLine(socket).split(" ");
 
         statusCode = Integer.parseInt(responseLineParts[1]);
 
         String headerLine;
-        while (!(headerLine = readLine(socket)).isEmpty()) {
+        while (!(headerLine = HttpMessage.readLine(socket)).isEmpty()) {
             int colonPos = headerLine.indexOf(':');
             String headerName = headerLine.substring(0, colonPos);
             String headerValue = headerLine.substring(colonPos+1).trim();
@@ -39,21 +39,9 @@ public class HttpClient {
         this.responseBody = body.toString();
     }
 
-    public static String readLine(Socket socket) throws IOException {
-        StringBuilder line  = new StringBuilder();
-        int c;
-        while((c = socket.getInputStream().read()) != -1) {
-            if (c == '\r') {
-               socket.getInputStream().read();
-               break;
-            }
-            line.append((char)c);
-        }
-        return line.toString();
-    }
-
     public static void main(String[] args) throws IOException {
-        new HttpClient("urlecho.appspot.com", 80, "/echo?status=200&body=Hello%20world!");
+        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=200&body=Hello%20world!");
+        System.out.println(client.getResponseBody());
 
     }
 
