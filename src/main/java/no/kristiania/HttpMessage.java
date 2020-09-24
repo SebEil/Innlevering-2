@@ -45,4 +45,22 @@ public class HttpMessage {
     public String getStartLine() {
         return startLine;
     }
+
+    public String getHeader(String headerName) {
+        return headers.get(headerName);
+    }
+
+    public void readHeaders(Socket socket) throws IOException {
+
+        String headerLine;
+        while (!(headerLine = HttpMessage.readLine(socket)).isEmpty()) {
+
+            int colonPos = headerLine.indexOf(':');
+            String headerName = headerLine.substring(0, colonPos);
+            String headerValue = headerLine.substring(colonPos+1).trim();
+
+            setHeader(headerName, headerValue);
+        }
+    }
+
 }
