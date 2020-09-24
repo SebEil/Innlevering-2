@@ -10,7 +10,6 @@ public class HttpClient {
     private String responseBody;
     private HttpMessage responseMessage;
 
-    //!!
     public HttpClient(String hostName, int port, String requestTarget) throws IOException {
         Socket socket = new Socket(hostName, port);
 
