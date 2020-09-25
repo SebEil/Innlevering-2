@@ -74,9 +74,9 @@ public class HttpServerTest {
         QueryString worker = new QueryString("");
         worker.addParameter("full_name", "workers");
         worker.addParameter("email_address", "email");
-        new HttpClient("localhost", 10008, "/members", "POST", worker);
-        assertEquals(List.of("workers"), server.getWorkerNames());
+  HttpClient client =  new HttpClient("localhost", 10008, "/api/addMembers", "POST", worker);
+        assertEquals(200, client.getStatusCode());
+      assertEquals(List.of("workers"), server.getWorkerNames());
     }
-
 
 }
