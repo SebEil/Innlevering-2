@@ -42,7 +42,7 @@ public class HttpServerTest {
     }
 
     @Test
-    @DisplayName("Første feilende test:")
+    @DisplayName("Return file from disc")
     void shouldReturnFileFromDisk() throws  IOException {
         HttpServer server = new HttpServer(10005);
         File contentRoot = new File("target/");
@@ -57,7 +57,7 @@ public class HttpServerTest {
     }
 
     @Test
-    @DisplayName("Andre feilende test:")
+    @DisplayName("Return contentType")
     void shouldReturnCorrectContentType() throws IOException {
         HttpServer server = new HttpServer(10006);
         File contentRoot = new File("target/");
