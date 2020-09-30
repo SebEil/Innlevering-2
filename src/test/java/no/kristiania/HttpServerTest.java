@@ -42,18 +42,18 @@ public class HttpServerTest {
     @Test
     void shouldReturnFileContent() throws  IOException {
         HttpServer server = new HttpServer(10005);
-        File documentRoot = new File("target");
-        server.setDocumentRoot(documentRoot);
+        File contentRoot = new File("target");
+        server.setContentRoot(contentRoot);
         String fileContent = "Hello " + new Date();
-        Files.writeString(new File(documentRoot, "index.html").toPath(), fileContent);
+        Files.writeString(new File(contentRoot, "index.html").toPath(), fileContent);
         HttpClient client = new HttpClient("localhost", 10005, "/index.html");
-        assertEquals(fileContent, client.getResponseBody());
+        assertEquals(fileContent, client.getResponseHeader("Content-Type"));
     }
 
     @Test
     void shouldReturn404onMissingFile() throws  IOException {
         HttpServer server = new HttpServer(10006);
-        server.setDocumentRoot(new File("target"));
+        server.setContentRoot(new File("target"));
         HttpClient client = new HttpClient("localhost", 10006, "/missingFile");
         assertEquals(404, client.getStatusCode());
     }
@@ -61,22 +61,16 @@ public class HttpServerTest {
     @Test
     void shouldReturnCorrectContentType() throws IOException {
         HttpServer server = new HttpServer(10007);
-        File documentRoot = new File("target");
-        server.setDocumentRoot(documentRoot);
-        Files.writeString(new File(documentRoot, "index.html").toPath(), "text/html");
+        File contentRoot = new File("target/");
+        server.setContentRoot(contentRoot);
+        Files.writeString(new File(contentRoot, "index.html").toPath(), "text/html");
         HttpClient client = new HttpClient("localhost", 10007, "/index.html");
         assertEquals("text/html", client.getResponseHeader("Content-Type"));
     }
 
-    @Test
-    void shouldPostWorker() throws IOException {
-        HttpServer server = new HttpServer(10008);
-        QueryString worker = new QueryString("");
-        worker.addParameter("full_name", "workers");
-        worker.addParameter("email_address", "email");
-  HttpClient client =  new HttpClient("localhost", 10008, "/api/addMembers", "POST", worker);
-        assertEquals(200, client.getStatusCode());
-      assertEquals(List.of("workers"), server.getWorkerNames());
-    }
+
+
+
+
 
 }

@@ -9,6 +9,7 @@
         <module name="pgr203innlevering2-SebEil" />
         <module name="Innlevering-Java-2" />
         <module name="Innlevering-java-2" />
+        <module name="Innlevering java-2" />
       </profile>
     </annotationProcessing>
   </component>

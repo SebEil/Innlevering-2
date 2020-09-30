@@ -10,7 +10,7 @@ import java.util.List;
 
 public class HttpServer {
 
-    private static File documentRoot;
+    private File contentRoot;
     private List<String> workerNames = new ArrayList<>();
 
     public HttpServer(int port) throws IOException {
@@ -19,8 +19,8 @@ public class HttpServer {
             new Thread(() -> {
                 while (true) {
                     try {
-                        Socket socket = serverSocket.accept();
-                        handleRequest(socket);
+                        Socket clientSocket = serverSocket.accept();
+                        handleRequest(clientSocket);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -28,63 +28,113 @@ public class HttpServer {
             }).start();
     }
 
-    private static void handleRequest(Socket clientSocket) throws IOException {
-        String requestLine = HttpMessage.readLine(clientSocket);
+
+    private void handleRequest(Socket clientSocket) throws IOException {
+        HttpMessage request = new HttpMessage(clientSocket);
+        String requestLine = request.getStartLine();
         System.out.println(requestLine);
 
+        String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
-        String statusCode = null;
-        String body = null;
 
         int questionPos = requestTarget.indexOf('?');
-        if (questionPos != -1){
-            QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
-            statusCode = queryString.getParameter("status");
-            body = queryString.getParameter("body");
-        } else if (!requestTarget.equals("/echo")){
-            File targetFile = new File(documentRoot, requestTarget);
 
-            if (!targetFile.exists()) {
-                writeResponse(clientSocket, "404", requestTarget + " not found");
-                return;
-            }
+        String requestPath = questionPos != -1 ? requestTarget.substring(0, questionPos) : requestTarget;
 
-            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
-            responseMessage.setHeader("Content-Length", String.valueOf(targetFile.length()));
-            responseMessage.setHeader("Content-Type", "text/html");
+        if (requestMethod.equals("POST")) {
+            QueryString requestParameter = new QueryString(request.getBody());
 
-            if (targetFile.getName().endsWith(".txt")) {
-                responseMessage.setHeader("Content-Type", "text/plain");
-            }
-            responseMessage.write(clientSocket);
+            workerNames.add(requestParameter.getParameter("workerName"));
+            String body = "Okay";
+            String response = "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: " + body.length() + "\r\n" +
+                    "\r\n" +
+                    body;
 
-            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
-                inputStream.transferTo(clientSocket.getOutputStream());
+            clientSocket.getOutputStream().write(response.getBytes());
+        } else {
+            if (requestPath.equals("/echo")) {
+                handleEchoRequest(clientSocket, requestTarget, questionPos);
+            } else if (requestPath.equals("/api/workers")) {
+                handleGetWorkers(clientSocket);
+            } else {
+                File file = new File(contentRoot, requestPath);
+                if (!file.exists()) {
+                    String body = file + " does not exists";
+                    String response = "HTTP/1.1 404 Not Found\r\n" +
+                            "Content-Length: " + body.length() + "\r\n" +
+                            "\r\n" +
+                            body;
+
+                    clientSocket.getOutputStream().write(response.getBytes());
+                    return;
+                }
+                String statusCode = "200";
+                String contentType = "text/plain";
+                //Add CSS later
+                if (file.getName().endsWith(".html")){
+                    contentType = "text/html";
+                }
+                if (file.getName().endsWith(".css")){
+                    contentType = "text/css";
+                }
+                String response = "HTTP/1.1" + statusCode + " OK\r\n" +
+                        "Content-Length: " + file.length() + "\r\n" +
+                        "Content-Type: " + contentType + "\r\n" +
+                        "\r\n";
+
+                clientSocket.getOutputStream().write(response.getBytes());
+
+                new FileInputStream(file).transferTo(clientSocket.getOutputStream());
             }
         }
-
-        if (statusCode == null) statusCode = "200";
-        if (body == null) body = "Hello <strong>World</strong>!";
-
-        writeResponse(clientSocket, statusCode, body);
     }
+        private void handleGetWorkers (Socket clientSocket)throws IOException {
+            String body = "<ul>";
+            for (String workerName : workerNames) {
+                body += "<li>" + workerName + "</li>";
+            }
+            body += "</ul>";
+            String response = "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: " + body.length() + "\r\n" +
+                    "Content-Type: text/plain\r\n" +
+                    "\r\n" +
+                    body;
 
-    private static void writeResponse(Socket clientSocket, String statusCode, String body) throws IOException {
-        HttpMessage responseMessage = new HttpMessage("HTTP/1.1 " + statusCode + " OK");
-        responseMessage.setHeader("Content-Length", String.valueOf(body.length()));
-        responseMessage.setHeader("Content-Type", "text/plain");
-        responseMessage.write(clientSocket);
-        clientSocket.getOutputStream().write(body.getBytes());
-    }
+            clientSocket.getOutputStream().write(response.getBytes());
+        }
+
+        private void handleEchoRequest (Socket clientSocket, String requestTarget,int questionPos)throws IOException {
+            String statusCode = "200";
+            String body = "Hello <String>World</Strong>!";
+            if (questionPos != -1) {
+                QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
+                if (queryString.getParameter("status") != null) {
+                    statusCode = queryString.getParameter("status");
+                }
+                if (queryString.getParameter("body") != null) {
+                    body = queryString.getParameter("body");
+                }
+            }
+            String response = "HTTP/1.1 " + statusCode + " OK\r\n" +
+                    "Content-Length: " + body.length() + "\r\n" +
+                    "Content-Type: text/plain\r\n" +
+                    "\r\n" +
+                    body;
+
+            clientSocket.getOutputStream().write(response.getBytes());
+        }
+
+
 
     public static void main(String[] args) throws IOException {
         HttpServer server = new HttpServer(8080);
-        server.setDocumentRoot(new File("src/main/Resources"));
+        server.setContentRoot(new File("src/main/Resources"));
     }
 
-    public void setDocumentRoot(File documentRoot) {
-        this.documentRoot = documentRoot;
-    }
+    public void setContentRoot(File contentRoot) {
+            this.contentRoot = contentRoot;
+        }
 
     public List<String> getWorkerNames() {
         return workerNames;

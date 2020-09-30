@@ -7,38 +7,40 @@ import java.util.Map;
 
 public class HttpClient {
 
+    private int statusCode;
+    private Map<String, String> responseHeaders = new HashMap<>();
     private String responseBody;
-    private HttpMessage responseMessage;
 
-    public HttpClient(String hostName, int port, String requestTarget) throws IOException {
-        Socket socket = new Socket(hostName, port);
-
-        HttpMessage requestMessage = new HttpMessage("GET " + requestTarget + " HTTP/1.1");
-        requestMessage.setHeader("Host", hostName);
-        requestMessage.write(socket);
-
-        responseMessage = HttpMessage.read(socket);
-
-        int contentLength = Integer.parseInt(getResponseHeader("Content-Length"));
-        StringBuilder body = new StringBuilder();
-        for (int i = 0 ; i < contentLength; i++) {
-            body.append((char)socket.getInputStream().read());
-        }
-        responseBody = body.toString();
+    public HttpClient(final String hostname, final int port, final String requestTarget) throws IOException {
+        this(hostname, port, requestTarget, "GET", null);
     }
 
-    public HttpClient(String hostName, int port, String requestTarget, String method, QueryString form) throws IOException {
+    public HttpClient(final String hostName, final int port, final String requestTarget, final String httpMethod, String requestBody) throws IOException {
+
         Socket socket = new Socket(hostName, port);
 
-        String requestBody = form.getQueryString();
+        String contentLengthHeader = requestBody != null ? "Content-Length: " + requestBody.length() + "\r\n" : "";
 
-        HttpMessage requestMessage = new HttpMessage(method + " " + requestTarget + " HTTP/1.1");
-        requestMessage.setHeader("Host", hostName);
-        requestMessage.setHeader("Content-Length", String.valueOf(requestBody.length()));
-        requestMessage.write(socket);
-        socket.getOutputStream().write(requestBody.getBytes());
+        String request = httpMethod + " " + requestTarget + " HTTP/1.1\r\n" +
+                "Host: " + hostName + "\r\n" +
+                contentLengthHeader +
+                "\r\n";
 
-        responseMessage = HttpMessage.read(socket);
+        socket.getOutputStream().write(request.getBytes());
+
+        if (requestBody != null){
+            socket.getOutputStream().write(requestBody.getBytes());
+        }
+
+        HttpMessage response = new HttpMessage(socket);
+
+        String responseLine = response.getStartLine();
+        responseHeaders = response.getHeaders();
+        responseBody = response.getBody();
+
+        String[] responseLineParts = responseLine.split(" ");
+
+        statusCode = Integer.parseInt(responseLineParts[1]);
     }
 
     public static void main(String[] args) throws IOException {
@@ -47,12 +49,11 @@ public class HttpClient {
     }
 
     public int getStatusCode() {
-        String[] responseLineParts = responseMessage.getStartLine().split(" ");
-        return Integer.parseInt(responseLineParts[1]);
+        return statusCode;
     }
 
     public String getResponseHeader(String headerName) {
-        return responseMessage.getHeader(headerName);
+        return responseHeaders.get(headerName);
     }
 
     public String getResponseBody() {
