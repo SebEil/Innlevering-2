@@ -54,7 +54,7 @@ public class HttpServer {
         } else {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
-            } else if (requestPath.equals("/api/workers")) {
+            } else if (requestTarget.equals("/api/workers")) {
                 handleGetWorkers(clientSocket);
             } else {
                 File file = new File(contentRoot, requestPath);
@@ -91,7 +91,7 @@ public class HttpServer {
     }
         private void handleGetWorkers (Socket clientSocket)throws IOException {
             String body = "<ul>";
-            for (String workerName : workerNames) {
+            for (String workerName : getWorkerNames()) {
                 body += "<li>" + workerName + "</li>";
             }
             body += "</ul>";
