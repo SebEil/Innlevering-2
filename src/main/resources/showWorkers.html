@@ -13,7 +13,7 @@
 </body>
 <script>
     const workers = document.getElementById("workers")
-    fetch("/api/newWorker")
+    fetch("/api/workers")
         .then(response => response.text())
         .then(html => workers.innerHTML = html);
 </script>

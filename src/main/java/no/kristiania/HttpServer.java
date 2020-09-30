@@ -80,6 +80,7 @@ public class HttpServer {
                 //}
                 String response = "HTTP/1.1 " + statusCode + " OK\r\n" +
                         "Content-Length: " + file.length() + "\r\n" +
+                        "Connection: close\r\n" +
                         "Content-Type: " + contentType + "\r\n" +
                         "\r\n";
 
