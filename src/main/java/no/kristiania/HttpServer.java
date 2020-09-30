@@ -43,7 +43,6 @@ public class HttpServer {
 
         if (requestMethod.equals("POST")) {
             QueryString requestParameter = new QueryString(request.getBody());
-
             workerNames.add(requestParameter.getParameter("workerName"));
             String body = "Okay";
             String response = "HTTP/1.1 200 OK\r\n" +
@@ -75,9 +74,9 @@ public class HttpServer {
                 if (file.getName().endsWith(".html")){
                     contentType = "text/html";
                 }
-                if (file.getName().endsWith(".css")){
-                    contentType = "text/css";
-                }
+                //if (file.getName().endsWith(".css")){
+                //   contentType = "text/css";
+                //}
                 String response = "HTTP/1.1" + statusCode + " OK\r\n" +
                         "Content-Length: " + file.length() + "\r\n" +
                         "Content-Type: " + contentType + "\r\n" +
