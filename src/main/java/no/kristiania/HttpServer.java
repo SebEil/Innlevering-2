@@ -74,10 +74,9 @@ public class HttpServer {
                 if (file.getName().endsWith(".html")){
                     contentType = "text/html";
                 }
-                //Add CSS later
-                //if (file.getName().endsWith(".css")){
-                //   contentType = "text/css";
-                //}
+                if (file.getName().endsWith(".css")){
+                   contentType = "text/css";
+                }
                 String response = "HTTP/1.1 " + statusCode + " OK\r\n" +
                         "Content-Length: " + file.length() + "\r\n" +
                         "Connection: close\r\n" +
