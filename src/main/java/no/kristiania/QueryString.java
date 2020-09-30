@@ -4,10 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class QueryString {
-        private Map<String, String> parameters = new LinkedHashMap<>();
+        private final Map<String, String> parameters = new LinkedHashMap<>();
 
         public QueryString(String queryString){
-            if (queryString.isEmpty()) return;
             for (String parameter : queryString.split("&")) {
                 int equalPos = parameter.indexOf("=");
                 String key = parameter.substring(0, equalPos);

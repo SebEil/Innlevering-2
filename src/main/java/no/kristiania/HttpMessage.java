@@ -64,7 +64,8 @@ public class HttpMessage {
     public Map<String, String> getHeaders() {
         return headers;
     }
-     public String getBody() {
+
+    public String getBody() {
         return body;
-     }
+    }
 }

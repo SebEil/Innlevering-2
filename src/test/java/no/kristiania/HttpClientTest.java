@@ -15,7 +15,7 @@ public class HttpClientTest {
     }
 
     @Test
-    void shouldReturnErrorfulStatusCode() throws IOException {
+    void shouldShowUnsuccessfulStatusCode() throws IOException {
         HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=404");
         assertEquals(404, client.getStatusCode());
     }

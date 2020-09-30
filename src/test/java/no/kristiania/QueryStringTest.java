@@ -2,6 +2,7 @@ package no.kristiania;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class QueryStringTest {
 
@@ -12,23 +13,24 @@ public class QueryStringTest {
     }
 
     @Test
-    void ShouldRetrieveOtherQueryParameters(){
-        QueryString queryString = new QueryString("Status=400");
-        assertEquals("400", queryString.getParameter("Status"));
+    void shouldReturnNullForMissingParameter() {
+        QueryString queryString = new QueryString("status=404");
+        assertNull(queryString.getParameter("body"));
     }
 
     @Test
-    void ShouldRetrieveParameterByName(){
-        QueryString queryString = new QueryString("text=Hello");
-        assertEquals("Hello", queryString.getParameter("text"));
-        assertEquals(null, queryString.getParameter("status"));
-    }
-
-    @Test
-    void ShouldHandleMultipleParameters(){
-        QueryString queryString = new QueryString("text=Hello&status=200");
-        assertEquals("Hello", queryString.getParameter("text"));
+    void shouldParseSeveralParameters() {
+        QueryString queryString = new QueryString("status=200&body=Hello");
         assertEquals("200", queryString.getParameter("status"));
+        assertEquals("Hello", queryString.getParameter("body"));
+    }
+
+    @Test
+    void shouldSerializeQueryString() {
+        QueryString queryString = new QueryString("status=200");
+        assertEquals("status=200", queryString.getQueryString());
+        queryString.addParameter("body", "Hello");
+        assertEquals("status=200&body=Hello", queryString.getQueryString());
     }
 
 }

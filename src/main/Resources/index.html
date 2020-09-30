@@ -2,24 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KristianiaProject</title>
+    <title>Hello World</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <h1>Project view</h1>
 
-<div id="project"></div>
+
+<div id="workers"></div>
 
 <div>
     <a href="newWorker.html">Add new project member</a>
 </div>
 </body>
 <script>
-fetch("/projectMembers")
-    .then(function(response) {
-        return response.text();
-    }).then(function(text) {
-        document.getElementById("projectMembers").innerHTML = text;
+fetch("/api/workers")
+    .then(response => response.text()).then(html => {
+    document.getElementById("workers").innerHTML = html;
     });
 </script>
 </html>

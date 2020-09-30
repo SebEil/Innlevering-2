@@ -104,9 +104,9 @@ public class HttpServer {
             clientSocket.getOutputStream().write(response.getBytes());
         }
 
-        private void handleEchoRequest (Socket clientSocket, String requestTarget,int questionPos)throws IOException {
+        private void handleEchoRequest (Socket clientSocket, String requestTarget, int questionPos) throws IOException {
             String statusCode = "200";
-            String body = "Hello <String>World</Strong>!";
+            String body = "Hello <strong>World</strong>!";
             if (questionPos != -1) {
                 QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
                 if (queryString.getParameter("status") != null) {
@@ -129,12 +129,12 @@ public class HttpServer {
 
     public static void main(String[] args) throws IOException {
         HttpServer server = new HttpServer(8080);
-        server.setContentRoot(new File("src/main/Resources"));
+        server.setContentRoot(new File("src/main/resources"));
     }
 
     public void setContentRoot(File contentRoot) {
             this.contentRoot = contentRoot;
-        }
+    }
 
     public List<String> getWorkerNames() {
         return workerNames;
