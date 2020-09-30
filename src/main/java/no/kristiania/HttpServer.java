@@ -70,10 +70,11 @@ public class HttpServer {
                 }
                 String statusCode = "200";
                 String contentType = "text/plain";
-                //Add CSS later
+
                 if (file.getName().endsWith(".html")){
                     contentType = "text/html";
                 }
+                //Add CSS later
                 //if (file.getName().endsWith(".css")){
                 //   contentType = "text/css";
                 //}

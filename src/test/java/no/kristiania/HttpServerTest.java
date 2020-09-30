@@ -79,13 +79,13 @@ public class HttpServerTest {
     @Test
     void shouldPostNewWorker() throws IOException {
         HttpServer server = new HttpServer(10008);
-        HttpClient client = new HttpClient("localhost", 10008, "/api/newWorker", "POST", "fullName=azad&emailAddress=azad%40mail");
+        HttpClient client = new HttpClient("localhost", 10008, "/api/newWorker", "POST", "workerName=azad&emailAddress=azad%40mail");
         assertEquals(200, client.getStatusCode());
         assertEquals(List.of("workers"), server.getWorkerNames());
     }
 
     @Test
-    void shouldReturnExistingProducts() throws IOException {
+    void shouldReturnExistingWorker() throws IOException {
         HttpServer server = new HttpServer(10009);
         server.getWorkerNames().add("Azad");
         HttpClient client = new HttpClient("localhost", 10009, "/api/workers");

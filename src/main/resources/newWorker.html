@@ -2,15 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add project member | KristianiaProject</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Add worker</title>
 </head>
 <body>
 <h1>Add project member</h1>
 
-<form method="POST" action="/api/addWorker">
-    <div><label>Worker name: <input type="text" name="full_name" /></label></div>
-    <div><label>Email address: <input type="email" name="email_address" /></label></div>
+<form method="POST" action="/api/newWorker">
+    <div><label>Worker name: <input type="text" name="workerName" /></label></div>
+    <div><label>Email address: <input type="text" name="emailAdress" /></label></div>
     <button>Add</button>
 </form>
 
