@@ -1,5 +1,6 @@
 package no.kristiania;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -41,6 +42,7 @@ public class HttpServerTest {
     }
 
     @Test
+    @DisplayName("Første feilende test:")
     void shouldReturnFileFromDisk() throws  IOException {
         HttpServer server = new HttpServer(10005);
         File contentRoot = new File("target/");
@@ -55,6 +57,7 @@ public class HttpServerTest {
     }
 
     @Test
+    @DisplayName("Andre feilende test:")
     void shouldReturnCorrectContentType() throws IOException {
         HttpServer server = new HttpServer(10006);
         File contentRoot = new File("target/");
@@ -65,6 +68,7 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", 10006, "/index.html");
         assertEquals("text/html", client.getResponseHeader("Content-Type"));
     }
+
 
     @Test
     void shouldReturn404onMissingFile() throws  IOException {

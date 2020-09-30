@@ -15,7 +15,7 @@
 </div>
 </body>
 <script>
-fetch("/api/workers")
+fetch("/api/newWorker")
     .then(response => response.text()).then(html => {
     document.getElementById("workers").innerHTML = html;
     });

@@ -78,7 +78,7 @@ public class HttpServer {
                 //if (file.getName().endsWith(".css")){
                 //   contentType = "text/css";
                 //}
-                String response = "HTTP/1.1" + statusCode + " OK\r\n" +
+                String response = "HTTP/1.1 " + statusCode + " OK\r\n" +
                         "Content-Length: " + file.length() + "\r\n" +
                         "Content-Type: " + contentType + "\r\n" +
                         "\r\n";

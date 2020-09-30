@@ -11,11 +11,11 @@ public class HttpClient {
     private Map<String, String> responseHeaders = new HashMap<>();
     private String responseBody;
 
-    public HttpClient(final String hostname, final int port, final String requestTarget) throws IOException {
+    public HttpClient(final String hostname, int port, final String requestTarget) throws IOException {
         this(hostname, port, requestTarget, "GET", null);
     }
 
-    public HttpClient(final String hostName, final int port, final String requestTarget, final String httpMethod, String requestBody) throws IOException {
+    public HttpClient(final String hostName, int port, final String requestTarget, final String httpMethod, String requestBody) throws IOException {
 
         Socket socket = new Socket(hostName, port);
 
